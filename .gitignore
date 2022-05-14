@@ -4,6 +4,16 @@
 *.dll
 *.so
 *.dylib
+.idea/
+*idea/
+../.idea/
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
 
 # Test binary, built with `go test -c`
 *.test
