@@ -3,7 +3,6 @@ package modbus
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"strconv"
 )
 
 func setParity(in string) string {
@@ -32,24 +31,6 @@ var SerialParity = struct {
 	Even: "even",
 }
 
-func byteArrayToBoolArray(ba []byte) []bool {
-	var s []bool
-	for _, b := range ba {
-		for _, c := range strconv.FormatUint(uint64(b), 2) {
-			s = append(s, c == []rune("1")[0])
-		}
-	}
-	return s
-}
-
-func convert(data []byte) []bool {
-	res := make([]bool, len(data)*8)
-	for i := range res {
-		res[i] = data[i/8]&(0x80>>byte(i&0x7)) != 0
-	}
-	return res
-}
-
 //SetEncoding Sets the encoding (endianness and word ordering) of subsequent requests.
 func (inst *Client) SetEncoding(endianness Endianness, wordOrder WordOrder) (err error) {
 	if endianness != BigEndian && endianness != LittleEndian {
@@ -67,25 +48,34 @@ func (inst *Client) SetEncoding(endianness Endianness, wordOrder WordOrder) (err
 	return
 }
 
+func B2i(b bool) int8 {
+	if b {
+		return 1
+	}
+	return 0
+}
+
 //ReadCoils Reads multiple coils (function code 01).
-func (inst *Client) ReadCoils(addr uint16, quantity uint16) (raw []byte, out float64, err error) {
-	raw, err = inst.Client.ReadCoils(addr, quantity)
+func (inst *Client) ReadCoils(addr uint16, quantity uint16) (raw []bool, out float64, err error) {
+	r, err := inst.Client.ReadCoils(addr, quantity)
 	if err != nil {
 		log.Errorf("modbus-function: failed to ReadCoils: %v\n", err)
 		return
 	}
-	out = float64(raw[0])
+	raw = decodeBools(quantity, r)
+	out = float64(B2i(raw[0]))
 	return
 }
 
 //ReadDiscreteInputs Reads multiple Discrete Input Registers (function code 02).
-func (inst *Client) ReadDiscreteInputs(addr uint16, quantity uint16) (raw []byte, out float64, err error) {
-	raw, err = inst.Client.ReadDiscreteInputs(addr, quantity)
+func (inst *Client) ReadDiscreteInputs(addr uint16, quantity uint16) (raw []bool, out float64, err error) {
+	r, err := inst.Client.ReadDiscreteInputs(addr, quantity)
 	if err != nil {
 		log.Errorf("modbus-function: failed to ReadDiscreteInputs: %v\n", err)
 		return
 	}
-	out = float64(raw[0])
+	raw = decodeBools(quantity, r)
+	out = float64(B2i(raw[0]))
 	return
 }
 

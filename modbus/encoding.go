@@ -2,7 +2,9 @@ package modbus
 
 import (
 	"encoding/binary"
+	"fmt"
 	"math"
+	"strconv"
 )
 
 // Error implements the error interface.
@@ -188,4 +190,35 @@ func decodeBools(quantity uint16, in []byte) (out []bool) {
 	}
 
 	return
+}
+
+//00000110
+//printAsBinary helps for debug into binary
+func printAsBinary(bytes []byte) {
+	for i := 0; i < len(bytes); i++ {
+		for j := 0; j < 8; j++ {
+			zeroOrOne := bytes[i] >> (7 - j) & 1
+			fmt.Printf("%c", '0'+zeroOrOne)
+		}
+		fmt.Print(" ")
+	}
+	fmt.Println()
+}
+
+func byteArrayToBoolArray(ba []byte) []bool {
+	var s []bool
+	for _, b := range ba {
+		for _, c := range strconv.FormatUint(uint64(b), 2) {
+			s = append(s, c == []rune("1")[0])
+		}
+	}
+	return s
+}
+
+func convert(data []byte) []bool {
+	res := make([]bool, len(data)*8)
+	for i := range res {
+		res[i] = data[i/8]&(0x80>>byte(i&0x7)) != 0
+	}
+	return res
 }
