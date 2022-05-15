@@ -5,6 +5,7 @@ import (
 	"github.com/NubeIO/nubeio-rubix-lib-modbus-go/modbus"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 var (
@@ -17,6 +18,7 @@ var (
 	registerNumber int
 	registerCount  int
 	writeValue     float64
+	toggle         bool //write on/off for 5 seconds
 
 	registerEncoding string // beb_lew
 	dataType         string // int16
@@ -28,6 +30,7 @@ var (
 	stopBits   int    // 1
 	dataBits   int    // 8
 	parity     string // "N"
+
 )
 
 var modbusCmd = &cobra.Command{
@@ -38,7 +41,7 @@ var modbusCmd = &cobra.Command{
 }
 
 func modbusInit() (*modbus.Client, error) {
-	fmt.Println(modbusIp)
+
 	mbClient := &modbus.Client{
 		HostIP:   modbusIp,
 		HostPort: modbusPort,
@@ -55,7 +58,10 @@ func modbusInit() (*modbus.Client, error) {
 
 func runModbus(cmd *cobra.Command, args []string) {
 	client, err := modbusInit()
-
+	if err != nil {
+		fmt.Println("modbusInit", err)
+		return
+	}
 	request := &modbus.Request{
 		Client:       client,
 		RegisterType: model.ObjectType(register),
@@ -65,16 +71,39 @@ func runModbus(cmd *cobra.Command, args []string) {
 		WriteValue:   writeValue,
 	}
 
-	raw, value, err := request.Do()
-	if err != nil {
-		fmt.Println("coils", err)
-	}
+	if toggle {
+		request.WriteValue = 0
+		_, _, err := request.Do()
+		if err != nil {
+			fmt.Println("coils", err)
+			return
+		}
+		request.WriteValue = writeValue
+		_, _, err = request.Do()
+		if err != nil {
+			fmt.Println("coils", err)
+			return
+		}
+		fmt.Println("Toggle ON!!!!!")
+		fmt.Println("write Value", request.WriteValue)
+		fmt.Println("!!!!!WAIT!!!!!")
+		time.Sleep(5 * time.Second)
+		request.WriteValue = 0
+		_, _, err = request.Do()
+		if err != nil {
+			fmt.Println("coils", err)
+			return
+		}
+		fmt.Println("Toggle OFF!!!!!")
+		fmt.Println("write Value", request.WriteValue)
 
-	fmt.Println("raw", raw, "value", value)
+	}
 
 }
 
 func init() {
 	RootCmd.AddCommand(modbusCmd)
+
+	modbusCmd.PersistentFlags().BoolVarP(&toggle, "toggle", "", false, "write value on/off or o 50 for 5 seconds")
 
 }
