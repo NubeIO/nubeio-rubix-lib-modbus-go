@@ -15,7 +15,6 @@ go run main.go reg --ip=192.168.15.202 --type=writeCoil --register=1  --value=0
 ```
 
 ## toggle
-
 toggle will write a value on for 5 seconds and then off again
 
 ```
