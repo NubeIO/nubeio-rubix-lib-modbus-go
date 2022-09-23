@@ -7,24 +7,6 @@ import (
 	"time"
 )
 
-func decodeUI(in uint16) float64 {
-	v := float64(in) / 100
-	return v
-}
-
-//decodeDI when reading the UIS as 10K sensors we can decode temp as a bool
-func decodeDI(in uint16) bool {
-	if in > 100 {
-		return true
-	}
-	return false
-}
-
-func writeVoltage(in float64) float64 {
-	v := float64(in) * 100
-	return v
-}
-
 func uint16sToBytes2(endianness Endianness, in []uint16) (out []byte) {
 	for i := range in {
 		out = append(out, Uint16ToBytes(endianness, in[i])...)
@@ -51,24 +33,11 @@ func Test_RTU(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	err = mbClient.SetEncoding(BigEndian, LowWordFirst)
+	//err = mbClient.SetEncoding(BigEndian, LowWordFirst)
 	mbClient.RTUClientHandler.SlaveID = 1
 
-	coils, _, _ := mbClient.ReadInputRegisters(0, 4)
-	decode := BytesToUint16s(mbClient.Endianness, coils)
-	fmt.Println(decodeUI(decode[0]), decodeDI(decode[1]), decodeDI(decode[2]))
-
-	uo1 := 10 * 100
-	uo2 := 2.2 * 100
-	in := []uint16{uint16(uo1), uint16(uo2)}
-	out := uint16sToBytes2(BigEndian, in)
-
-	registers, err := mbClient.WriteMultipleRegisters(0, 2, out)
-	fmt.Println(registers)
-	fmt.Println(err)
-	if err != nil {
-		return
-	}
+	coils, _, _ := mbClient.ReadInputRegisters(0, 7)
+	fmt.Println(coils)
 
 }
 

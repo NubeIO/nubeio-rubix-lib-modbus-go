@@ -55,7 +55,7 @@ func (inst *Client) New() (*Client, error) {
 		if inst.Serial.stopBits != 0 {
 			stopBits = inst.Serial.stopBits
 		}
-		dataBits := 38400
+		dataBits := 8
 		if inst.Serial.dataBits != 0 {
 			dataBits = inst.Serial.dataBits
 		}
