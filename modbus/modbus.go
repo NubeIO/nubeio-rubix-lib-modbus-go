@@ -44,10 +44,25 @@ func (inst *Client) New() (*Client, error) {
 	}
 	if inst.IsSerial {
 		serialPort := "/dev/ttyUSB0"
+		if inst.Serial.serialPort != "" {
+			serialPort = inst.Serial.serialPort
+		}
 		baudRate := 38400
+		if inst.Serial.baudRate != 0 {
+			baudRate = inst.Serial.baudRate
+		}
 		stopBits := 1
-		dataBits := 8
+		if inst.Serial.stopBits != 0 {
+			stopBits = inst.Serial.stopBits
+		}
+		dataBits := 38400
+		if inst.Serial.dataBits != 0 {
+			dataBits = inst.Serial.dataBits
+		}
 		parity := "N"
+		if inst.Serial.parity != "" {
+			parity = inst.Serial.parity
+		}
 		handler := modbus.NewRTUClientHandler(serialPort)
 		handler.BaudRate = baudRate
 		handler.DataBits = dataBits

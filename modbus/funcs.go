@@ -87,7 +87,7 @@ func (inst *Client) ReadInputRegisters(addr uint16, quantity uint16) (raw []byte
 		return
 	}
 	// decode payload bytes as uint16s
-	decode := bytesToUint16s(inst.Endianness, raw)
+	decode := BytesToUint16s(inst.Endianness, raw)
 	if len(decode) >= 0 {
 		out = float64(decode[0])
 	}
@@ -102,7 +102,7 @@ func (inst *Client) ReadHoldingRegisters(addr uint16, quantity uint16) (raw []by
 		return
 	}
 	// decode payload bytes as uint16s
-	decode := bytesToUint16s(inst.Endianness, raw)
+	decode := BytesToUint16s(inst.Endianness, raw)
 	if len(decode) >= 0 {
 		out = float64(decode[0])
 	}
@@ -125,7 +125,7 @@ func (inst *Client) ReadFloat32s(addr uint16, quantity uint16, regType RegType) 
 		}
 	}
 	// decode payload bytes as float32s
-	raw = bytesToFloat32s(inst.Endianness, inst.WordOrder, mbPayload)
+	raw = BytesToFloat32s(inst.Endianness, inst.WordOrder, mbPayload)
 	return
 }
 
@@ -156,7 +156,7 @@ func (inst *Client) ReadFloat64s(addr uint16, quantity uint16, regType RegType) 
 		}
 	}
 	// decode payload bytes as float32s
-	raw = bytesToFloat64s(inst.Endianness, inst.WordOrder, mbPayload)
+	raw = BytesToFloat64s(inst.Endianness, inst.WordOrder, mbPayload)
 
 	return
 }
@@ -174,13 +174,17 @@ func (inst *Client) ReadFloat64(addr uint16, regType RegType) (raw []float64, ou
 
 //WriteFloat32 Writes a single 32-bit float register.
 func (inst *Client) WriteFloat32(addr uint16, value float64) (raw []byte, out float64, err error) {
-	raw, err = inst.Client.WriteMultipleRegisters(addr, 2, float32ToBytes(inst.Endianness, inst.WordOrder, float32(value)))
+	raw, err = inst.Client.WriteMultipleRegisters(addr, 2, Float32ToBytes(inst.Endianness, inst.WordOrder, float32(value)))
 	if err != nil {
 		log.Errorf("modbus-function: failed to WriteFloat32: %v\n", err)
 		return
 	}
 	out = value
 	return
+}
+
+func (inst *Client) WriteMultipleRegisters(address, quantity uint16, value []byte) (results []byte, err error) {
+	return inst.Client.WriteMultipleRegisters(address, quantity, value)
 }
 
 //WriteSingleRegister write one register

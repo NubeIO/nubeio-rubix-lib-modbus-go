@@ -85,9 +85,9 @@ func (inst *Request) Do() (response interface{}, responseValue float64, err erro
 			return inst.Client.ReadHoldingRegisters(address, uint16(length))
 		} else if dataType == string(model.TypeUint64) || dataType == string(model.TypeInt64) {
 			return inst.Client.ReadHoldingRegisters(address, uint16(length))
-		} else if dataType == string(model.TypeFloat32) || dataType == string(model.TypeFloat32) {
+		} else if dataType == string(model.TypeFloat32) {
 			return inst.Client.ReadFloat32(address, HoldingRegister)
-		} else if dataType == string(model.TypeFloat64) || dataType == string(model.TypeFloat64) {
+		} else if dataType == string(model.TypeFloat64) {
 			return inst.Client.ReadFloat32(address, HoldingRegister)
 		}
 		//READ INPUT REGISTERS
@@ -111,9 +111,9 @@ func (inst *Request) Do() (response interface{}, responseValue float64, err erro
 			return inst.Client.WriteSingleRegister(address, uint16(writeValue))
 		} else if dataType == string(model.TypeUint64) || dataType == string(model.TypeInt64) {
 			return inst.Client.WriteSingleRegister(address, uint16(writeValue))
-		} else if dataType == string(model.TypeFloat32) || dataType == string(model.TypeFloat32) {
+		} else if dataType == string(model.TypeFloat32) {
 			return inst.Client.WriteFloat32(address, writeValue)
-		} else if dataType == string(model.TypeFloat64) || dataType == string(model.TypeFloat64) {
+		} else if dataType == string(model.TypeFloat64) {
 			return inst.Client.WriteFloat32(address, writeValue)
 		}
 	}

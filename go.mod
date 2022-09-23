@@ -1,6 +1,6 @@
 module github.com/NubeIO/nubeio-rubix-lib-modbus-go
 
-go 1.18
+go 1.17
 
 require (
 	github.com/NubeIO/nubeio-rubix-lib-helpers-go v0.2.7
@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
