@@ -12,11 +12,11 @@ type WordOrder uint
 type Error string
 
 type Serial struct {
-	serialPort string // "/dev/ttyUSB0"
-	baudRate   int    // 38400
-	stopBits   int    // 1
-	dataBits   int    // 8
-	parity     string // "N"
+	SerialPort string // "/dev/ttyUSB0"
+	BaudRate   int    // 38400
+	StopBits   int    // 1
+	DataBits   int    // 8
+	Parity     string // "N"
 }
 
 type Client struct {
@@ -44,24 +44,24 @@ func (inst *Client) New() (*Client, error) {
 	}
 	if inst.IsSerial {
 		serialPort := "/dev/ttyUSB0"
-		if inst.Serial.serialPort != "" {
-			serialPort = inst.Serial.serialPort
+		if inst.Serial.SerialPort != "" {
+			serialPort = inst.Serial.SerialPort
 		}
 		baudRate := 38400
-		if inst.Serial.baudRate != 0 {
-			baudRate = inst.Serial.baudRate
+		if inst.Serial.BaudRate != 0 {
+			baudRate = inst.Serial.BaudRate
 		}
 		stopBits := 1
-		if inst.Serial.stopBits != 0 {
-			stopBits = inst.Serial.stopBits
+		if inst.Serial.StopBits != 0 {
+			stopBits = inst.Serial.StopBits
 		}
 		dataBits := 8
-		if inst.Serial.dataBits != 0 {
-			dataBits = inst.Serial.dataBits
+		if inst.Serial.DataBits != 0 {
+			dataBits = inst.Serial.DataBits
 		}
 		parity := "N"
-		if inst.Serial.parity != "" {
-			parity = inst.Serial.parity
+		if inst.Serial.Parity != "" {
+			parity = inst.Serial.Parity
 		}
 		handler := modbus.NewRTUClientHandler(serialPort)
 		handler.BaudRate = baudRate
