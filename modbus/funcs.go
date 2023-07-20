@@ -109,6 +109,26 @@ func (inst *Client) ReadHoldingRegisters(addr uint16, quantity uint16) (raw []by
 	return
 }
 
+//ReadUint32s Reads multiple 32-bit float registers.
+func (inst *Client) ReadUint32s(addr uint16, quantity uint16, regType RegType) (raw []uint32, err error) {
+	var mbPayload []byte
+	// read 2 * quantity uint16 registers, as bytes
+	if regType == HoldingRegister {
+		mbPayload, err = inst.Client.ReadHoldingRegisters(addr, quantity*2)
+		if err != nil {
+			return
+		}
+	} else {
+		mbPayload, err = inst.Client.ReadInputRegisters(addr, quantity*2)
+		if err != nil {
+			return
+		}
+	}
+	// decode payload bytes as float32s
+	raw = BytesToUint32s(inst.Endianness, inst.WordOrder, mbPayload)
+	return
+}
+
 //ReadFloat32s Reads multiple 32-bit float registers.
 func (inst *Client) ReadFloat32s(addr uint16, quantity uint16, regType RegType) (raw []float32, err error) {
 	var mbPayload []byte

@@ -44,20 +44,35 @@ func Test_RTU(t *testing.T) {
 func modbusInit() (*Client, error) {
 
 	mbClient := &Client{
-		HostIP:   "192.168.15.202",
+		HostIP:   "192.168.0.4",
 		HostPort: 502,
 	}
 	mbClient, err := mbClient.New()
 	if err != nil {
 		return nil, err
 	}
-	mbClient.TCPClientHandler.Address = fmt.Sprintf("%s:%d", "192.168.15.202", 502)
-	mbClient.TCPClientHandler.SlaveID = byte(1)
+	mbClient.TCPClientHandler.Address = fmt.Sprintf("%s:%d", "192.168.0.4", 502)
+	mbClient.TCPClientHandler.SlaveID = byte(11)
 
 	return mbClient, nil
 }
 
 func Test_readCols(t *testing.T) {
+
+	init, err := modbusInit()
+	if err != nil {
+		return
+	}
+
+	coils, f, err := init.ReadFloat32(18444, 5)
+	if err != nil {
+		return
+	}
+	fmt.Println(coils, f, err)
+
+}
+
+func Test_readHoldingRegisters(t *testing.T) {
 
 	init, err := modbusInit()
 	if err != nil {
@@ -81,7 +96,7 @@ func Test_readCols(t *testing.T) {
 
 func Test_HoldingRegister(t *testing.T) {
 
-	handler := modbus.NewTCPClientHandler("192.168.15.202:502")
+	handler := modbus.NewTCPClientHandler("192.168.0.4:502")
 	handler.Timeout = 10 * time.Second
 	handler.SlaveID = 1
 	// Connect manually so that multiple requests are handled in one connection session
@@ -91,9 +106,9 @@ func Test_HoldingRegister(t *testing.T) {
 
 	client := modbus.NewClient(handler)
 
-	handler.SetSlave(2)
+	handler.SetSlave(11)
 
-	registers, err := client.ReadInputRegisters(1, 1)
+	registers, err := client.ReadHoldingRegisters(18444, 4)
 	fmt.Println(registers, err)
 	if err != nil {
 		return
