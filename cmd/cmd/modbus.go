@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-modbus-go/modbus"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/spf13/cobra"
 	"time"
 )
@@ -13,17 +13,17 @@ var (
 	modbusPort int
 	deviceAddr int
 
-	//register
+	// register
 	register       string
 	registerNumber int
 	registerCount  int
 	writeValue     float64
-	toggle         bool //write on/off for 5 seconds
+	toggle         bool // write on/off for 5 seconds
 
 	registerEncoding string // beb_lew
 	dataType         string // int16
 
-	//serial
+	// serial
 	isSerial   bool
 	serialPort string // "/dev/ttyUSB0"
 	baudRate   int    // 38400
