@@ -2,7 +2,7 @@ package modbus
 
 import (
 	"github.com/NubeIO/nubeio-rubix-lib-helpers-go/pkg/str"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 )
 
 func isWrite(t string) bool {
@@ -39,11 +39,11 @@ type Request struct {
 }
 
 func (inst *Request) Do() (response interface{}, responseValue float64, err error) {
-	registerEncoding := inst.RegisterEncoding                              //beb_lew
-	registerType := str.NewString(string(inst.RegisterType)).ToSnakeCase() //eg: readCoil, read_coil, writeCoil
-	dataType := str.NewString(string(inst.DataType)).ToSnakeCase()         //eg: int16, uint16
-	address, err := PointAddress(inst.Address, inst.Client.DeviceZeroMode) //register address
-	length := inst.Length                                                  //modbus register length
+	registerEncoding := inst.RegisterEncoding                              // beb_lew
+	registerType := str.NewString(string(inst.RegisterType)).ToSnakeCase() // eg: readCoil, read_coil, writeCoil
+	dataType := str.NewString(string(inst.DataType)).ToSnakeCase()         // eg: int16, uint16
+	address, err := PointAddress(inst.Address, inst.Client.DeviceZeroMode) // register address
+	length := inst.Length                                                  // modbus register length
 	writeValue := inst.WriteValue
 
 	switch registerEncoding {
@@ -58,7 +58,7 @@ func (inst *Request) Do() (response interface{}, responseValue float64, err erro
 	default:
 		err = inst.Client.SetEncoding(BigEndian, LowWordFirst)
 	}
-	if length <= 0 { //make sure length is > 0
+	if length <= 0 { // make sure length is > 0
 		length = 1
 	}
 
@@ -69,15 +69,15 @@ func (inst *Request) Do() (response interface{}, responseValue float64, err erro
 	}
 
 	switch registerType {
-	//COILS
+	// COILS
 	case string(model.ObjTypeReadCoil), string(model.ObjTypeReadCoils):
 		return inst.Client.ReadCoils(address, uint16(length))
 	case string(model.ObjTypeWriteCoil):
 		return inst.Client.WriteCoil(address, writeCoilPayload(writeValue))
-		//READ DISCRETE INPUTS
+		// READ DISCRETE INPUTS
 	case string(model.ObjTypeReadDiscreteInput):
 		return inst.Client.ReadDiscreteInputs(address, uint16(length))
-		//READ HOLDINGS
+		// READ HOLDINGS
 	case string(model.ObjTypeReadHolding):
 		if dataType == string(model.TypeUint16) || dataType == string(model.TypeInt16) {
 			return inst.Client.ReadHoldingRegisters(address, uint16(length))
@@ -90,7 +90,7 @@ func (inst *Request) Do() (response interface{}, responseValue float64, err erro
 		} else if dataType == string(model.TypeFloat64) {
 			return inst.Client.ReadFloat32(address, HoldingRegister)
 		}
-		//READ INPUT REGISTERS
+		// READ INPUT REGISTERS
 	case string(model.ObjTypeReadRegister):
 		if dataType == string(model.TypeUint16) || dataType == string(model.TypeInt16) {
 			return inst.Client.ReadInputRegisters(address, uint16(length))
@@ -103,7 +103,7 @@ func (inst *Request) Do() (response interface{}, responseValue float64, err erro
 		} else if dataType == string(model.TypeFloat64) {
 			return inst.Client.ReadFloat32(address, InputRegister)
 		}
-		//WRITE HOLDINGS
+		// WRITE HOLDINGS
 	case string(model.ObjTypeWriteHolding):
 		if dataType == string(model.TypeUint16) || dataType == string(model.TypeInt16) {
 			return inst.Client.WriteSingleRegister(address, uint16(writeValue))
