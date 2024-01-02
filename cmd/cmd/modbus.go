@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-modbus-go/modbus"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/datatype"
 	"github.com/spf13/cobra"
 	"time"
 )
@@ -64,7 +64,7 @@ func runModbus(cmd *cobra.Command, args []string) {
 	}
 	request := &modbus.Request{
 		Client:       client,
-		RegisterType: model.ObjectType(register),
+		RegisterType: datatype.ObjectType(register),
 		DataType:     "uint16",
 		Address:      registerNumber,
 		Length:       registerCount,
