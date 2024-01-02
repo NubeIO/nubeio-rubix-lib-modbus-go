@@ -2,18 +2,18 @@ package modbus
 
 import (
 	"github.com/NubeIO/nubeio-rubix-lib-helpers-go/pkg/str"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/datatype"
 )
 
 func isWrite(t string) bool {
-	switch model.ObjectType(t) {
-	case model.ObjTypeWriteCoil, model.ObjTypeWriteCoils:
+	switch datatype.ObjectType(t) {
+	case datatype.ObjTypeWriteCoil, datatype.ObjTypeWriteCoils:
 		return true
-	case model.ObjTypeWriteHolding, model.ObjTypeWriteHoldings:
+	case datatype.ObjTypeWriteHolding, datatype.ObjTypeWriteHoldings:
 		return true
-	case model.ObjTypeWriteInt16, model.ObjTypeWriteUint16:
+	case datatype.ObjTypeWriteInt16, datatype.ObjTypeWriteUint16:
 		return true
-	case model.ObjTypeWriteFloat32:
+	case datatype.ObjTypeWriteFloat32:
 		return true
 	}
 	return false
@@ -30,11 +30,11 @@ func writeCoilPayload(in float64) (out uint16) {
 
 type Request struct {
 	Client           *Client
-	Address          int              // 1
-	Length           int              // 2
-	RegisterEncoding model.ByteOrder  // beb_lew
-	RegisterType     model.ObjectType // readCoil read_coil
-	DataType         model.DataType   // int16
+	Address          int                 // 1
+	Length           int                 // 2
+	RegisterEncoding datatype.ByteOrder  // beb_lew
+	RegisterType     datatype.ObjectType // readCoil read_coil
+	DataType         datatype.DataType   // int16
 	WriteValue       float64
 }
 
@@ -47,13 +47,13 @@ func (inst *Request) Do() (response interface{}, responseValue float64, err erro
 	writeValue := inst.WriteValue
 
 	switch registerEncoding {
-	case model.ByteOrderLebBew:
+	case datatype.ByteOrderLebBew:
 		err = inst.Client.SetEncoding(LittleEndian, HighWordFirst)
-	case model.ByteOrderLebLew:
+	case datatype.ByteOrderLebLew:
 		err = inst.Client.SetEncoding(LittleEndian, LowWordFirst)
-	case model.ByteOrderBebLew:
+	case datatype.ByteOrderBebLew:
 		err = inst.Client.SetEncoding(BigEndian, LowWordFirst)
-	case model.ByteOrderBebBew:
+	case datatype.ByteOrderBebBew:
 		err = inst.Client.SetEncoding(BigEndian, HighWordFirst)
 	default:
 		err = inst.Client.SetEncoding(BigEndian, LowWordFirst)
@@ -70,50 +70,50 @@ func (inst *Request) Do() (response interface{}, responseValue float64, err erro
 
 	switch registerType {
 	// COILS
-	case string(model.ObjTypeReadCoil), string(model.ObjTypeReadCoils):
+	case string(datatype.ObjTypeReadCoil), string(datatype.ObjTypeReadCoils):
 		return inst.Client.ReadCoils(address, uint16(length))
-	case string(model.ObjTypeWriteCoil):
+	case string(datatype.ObjTypeWriteCoil):
 		return inst.Client.WriteCoil(address, writeCoilPayload(writeValue))
 		// READ DISCRETE INPUTS
-	case string(model.ObjTypeReadDiscreteInput):
+	case string(datatype.ObjTypeReadDiscreteInput):
 		return inst.Client.ReadDiscreteInputs(address, uint16(length))
 		// READ HOLDINGS
-	case string(model.ObjTypeReadHolding):
-		if dataType == string(model.TypeUint16) || dataType == string(model.TypeInt16) {
+	case string(datatype.ObjTypeReadHolding):
+		if dataType == string(datatype.TypeUint16) || dataType == string(datatype.TypeInt16) {
 			return inst.Client.ReadHoldingRegisters(address, uint16(length))
-		} else if dataType == string(model.TypeUint32) || dataType == string(model.TypeInt32) {
+		} else if dataType == string(datatype.TypeUint32) || dataType == string(datatype.TypeInt32) {
 			return inst.Client.ReadHoldingRegisters(address, uint16(length))
-		} else if dataType == string(model.TypeUint64) || dataType == string(model.TypeInt64) {
+		} else if dataType == string(datatype.TypeUint64) || dataType == string(datatype.TypeInt64) {
 			return inst.Client.ReadHoldingRegisters(address, uint16(length))
-		} else if dataType == string(model.TypeFloat32) {
+		} else if dataType == string(datatype.TypeFloat32) {
 			return inst.Client.ReadFloat32(address, HoldingRegister)
-		} else if dataType == string(model.TypeFloat64) {
+		} else if dataType == string(datatype.TypeFloat64) {
 			return inst.Client.ReadFloat32(address, HoldingRegister)
 		}
 		// READ INPUT REGISTERS
-	case string(model.ObjTypeReadRegister):
-		if dataType == string(model.TypeUint16) || dataType == string(model.TypeInt16) {
+	case string(datatype.ObjTypeReadRegister):
+		if dataType == string(datatype.TypeUint16) || dataType == string(datatype.TypeInt16) {
 			return inst.Client.ReadInputRegisters(address, uint16(length))
-		} else if dataType == string(model.TypeUint32) || dataType == string(model.TypeInt32) {
+		} else if dataType == string(datatype.TypeUint32) || dataType == string(datatype.TypeInt32) {
 			return inst.Client.ReadInputRegisters(address, uint16(length))
-		} else if dataType == string(model.TypeUint64) || dataType == string(model.TypeInt64) {
+		} else if dataType == string(datatype.TypeUint64) || dataType == string(datatype.TypeInt64) {
 			return inst.Client.ReadInputRegisters(address, uint16(length))
-		} else if dataType == string(model.TypeFloat32) {
+		} else if dataType == string(datatype.TypeFloat32) {
 			return inst.Client.ReadFloat32(address, InputRegister)
-		} else if dataType == string(model.TypeFloat64) {
+		} else if dataType == string(datatype.TypeFloat64) {
 			return inst.Client.ReadFloat32(address, InputRegister)
 		}
 		// WRITE HOLDINGS
-	case string(model.ObjTypeWriteHolding):
-		if dataType == string(model.TypeUint16) || dataType == string(model.TypeInt16) {
+	case string(datatype.ObjTypeWriteHolding):
+		if dataType == string(datatype.TypeUint16) || dataType == string(datatype.TypeInt16) {
 			return inst.Client.WriteSingleRegister(address, uint16(writeValue))
-		} else if dataType == string(model.TypeUint32) || dataType == string(model.TypeInt32) {
+		} else if dataType == string(datatype.TypeUint32) || dataType == string(datatype.TypeInt32) {
 			return inst.Client.WriteSingleRegister(address, uint16(writeValue))
-		} else if dataType == string(model.TypeUint64) || dataType == string(model.TypeInt64) {
+		} else if dataType == string(datatype.TypeUint64) || dataType == string(datatype.TypeInt64) {
 			return inst.Client.WriteSingleRegister(address, uint16(writeValue))
-		} else if dataType == string(model.TypeFloat32) {
+		} else if dataType == string(datatype.TypeFloat32) {
 			return inst.Client.WriteFloat32(address, writeValue)
-		} else if dataType == string(model.TypeFloat64) {
+		} else if dataType == string(datatype.TypeFloat64) {
 			return inst.Client.WriteFloat32(address, writeValue)
 		}
 	}
