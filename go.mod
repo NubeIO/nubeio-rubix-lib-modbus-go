@@ -10,7 +10,7 @@ require (
 )
 
 require (
-	github.com/NubeIO/nubeio-rubix-lib-models-go v1.12.0
+	github.com/NubeIO/nubeio-rubix-lib-models-go v1.14.0
 	github.com/grid-x/serial v0.0.0-20191104121038-e24bc9bf6f08 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
